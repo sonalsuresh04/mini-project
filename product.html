@@ -512,6 +512,16 @@
                                     'kitabay': 'https://kitabay.com/search?q=' + book_data[0][0]|replace(' ', '+')
                                 } %}
                                 
+                                {% set websites = {'amazon': False, 'bookswagon': False, 'kitabay': False} %}
+                                
+                                <!-- First, mark which websites are present in the data -->
+                                {% for item in book_data %}
+                                    {% if item[4] in websites %}
+                                        {% set _ = websites.update({item[4]: True}) %}
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                <!-- Display data for websites that are present -->
                                 {% for item in book_data %}
                                     <tr>
                                         <td>
@@ -539,6 +549,35 @@
                                             <a href="{{ store_links[item[4]] }}" target="_blank" rel="noopener noreferrer" class="buy-button">Buy Now</a>
                                         </td>
                                     </tr>
+                                    {% set _ = websites.update({item[4]: False}) %}
+                                {% endfor %}
+                                
+                                <!-- Add missing websites with "Not Available" -->
+                                {% for website, present in websites.items() %}
+                                    {% if present %}
+                                        <tr>
+                                            <td>
+                                                <div class="store-info">
+                                                    {% if website == "amazon" %}
+                                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/1024px-Amazon_logo.svg.png" alt="Amazon" class="store-logo">
+                                                        Amazon
+                                                    {% elif website == "bookswagon" %}
+                                                        <img src="https://www.bookswagon.com/images/logos/logo-new.png" alt="Bookswagon" class="store-logo">
+                                                        Bookswagon
+                                                    {% elif website == "kitabay" %}
+                                                        <img src="https://source.unsplash.com/random/100x100/?bookstore" alt="Kitabay" class="store-logo">
+                                                        Kitabay
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="text-gray-400 italic">Not Available</span>
+                                            </td>
+                                            <td>
+                                                <a href="{{ store_links[website] }}" target="_blank" rel="noopener noreferrer" class="buy-button">Buy Now</a>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
                                 {% endfor %}
                             </tbody>
                         </table>
