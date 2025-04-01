@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Authors - Book Bargain</title>
+    <style>
+        /* Reset and base styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, Helvetica, sans-serif; background-color: #f8f1ea; color: #333; }
+        a { text-decoration: none; color: inherit; }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        
+        /* Header styles */
+        header { background-color: #7a4a62; color: white; padding: 1rem; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; color: #e8a798; }
+        .logo span { font-size: 2rem; }
+        nav { display: flex; align-items: center; }
+        nav a { margin: 0 1rem; transition: color 0.3s; }
+        nav a:hover { color: #e8a798; }
+        
+        /* Dropdown menu styles */
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-toggle { display: flex; align-items: center; cursor: pointer; margin: 0 1rem; transition: color 0.3s; }
+        .dropdown-toggle:hover { color: #e8a798; }
+        .dropdown-toggle svg { margin-left: 5px; transition: transform 0.3s; }
+        .dropdown-menu { position: absolute; top: 100%; left: 0; z-index: 1000; display: none; min-width: 180px; padding: 0.5rem 0; margin: 0.125rem 0 0; background-color: #fff; border-radius: 0.25rem; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); }
+        .dropdown-menu.show { display: block; }
+        .dropdown-item { display: block; width: 100%; padding: 0.5rem 1rem; clear: both; font-weight: 400; color: #333; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0; transition: background-color 0.3s; }
+        .dropdown-item:hover { background-color: #f8f1ea; color: #7a4a62; }
+        
+        .search-container { position: relative; margin-left: 1rem; }
+        .search-input { border-radius: 9999px; padding: 0.25rem 1rem; width: 250px; border: none; font-size: 0.875rem; }
+        .search-button { position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; }
+        
+        /* Authors page styles */
+        .page-header { padding: 2rem 0; text-align: center; }
+        .page-title { font-size: 2.5rem; color: #7a4a62; margin-bottom: 1rem; }
+        .page-description { font-size: 1.1rem; color: #666; max-width: 800px; margin: 0 auto; }
+        
+        /* Authors grid */
+        .authors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .author-card { background-color: white; border-radius: 0.5rem; padding: 1.5rem; display: flex; flex-direction: column; align-items: center; transition: transform 0.3s; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
+        .author-card:hover { transform: translateY(-5px); }
+        .author-avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; }
+        .author-name { font-size: 1.25rem; font-weight: 500; text-align: center; color: #7a4a62; margin-bottom: 0.5rem; }
+        .author-book-count { font-size: 0.875rem; color: #666; margin-bottom: 1rem; }
+        .view-author-button { background-color: #7a4a62; color: white; padding: 0.5rem 1.5rem; border-radius: 9999px; font-size: 0.875rem; display: flex; align-items: center; transition: background-color 0.3s; }
+        .view-author-button:hover { background-color: #5a3547; }
+        
+        /* Search and filter */
+        .search-filter { background-color: white; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
+        .search-filter-title { font-size: 1.25rem; margin-bottom: 1rem; color: #7a4a62; }
+        .search-filter-form { display: flex; gap: 1rem; }
+        .search-filter-input { flex: 1; padding: 0.5rem 1rem; border: 1px solid #ddd; border-radius: 0.25rem; }
+        .search-filter-button { background-color: #7a4a62; color: white; padding: 0.5rem 1.5rem; border: none; border-radius: 0.25rem; cursor: pointer; transition: background-color 0.3s; }
+        .search-filter-button:hover { background-color: #5a3547; }
+        
+        /* Alphabet filter */
+        .alphabet-filter { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0; }
+        .alphabet-letter { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background-color: #f8f1ea; border-radius: 50%; font-weight: 500; transition: all 0.3s; }
+        .alphabet-letter:hover, .alphabet-letter.active { background-color: #7a4a62; color: white; }
+        
+        /* Pagination */
+        .pagination { display: flex; justify-content: center; margin: 2rem 0; }
+        .page-item { margin: 0 0.25rem; }
+        .page-link { display: block; padding: 0.5rem 1rem; background-color: white; border: 1px solid #ddd; border-radius: 0.25rem; color: #7a4a62; transition: all 0.3s; }
+        .page-link:hover, .page-link.active { background-color: #7a4a62; color: white; border-color: #7a4a62; }
+        
+        /* Footer */
+        footer { background-color: #f8f1ea; padding: 2rem 1.5rem; border-top: 1px solid #ddd; margin-top: 3rem; }
+        .footer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+        .footer-heading { font-size: 1.125rem; font-weight: 500; margin-bottom: 1rem; }
+        .footer-text { font-size: 0.875rem; color: #666; }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 0.5rem; }
+        .footer-links a { font-size: 0.875rem; color: #666; transition: color 0.3s; }
+        .footer-links a:hover { color: #333; }
+        .footer-bottom { margin-top: 2rem; border-top: 1px solid #e0e0e0; padding-top: 2rem; }
+        .copyright { font-size: 0.875rem; color: #666; text-align: center; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-container { flex-direction: column; align-items: center; }
+            .logo { margin-bottom: 1rem; }
+            nav { flex-wrap: wrap; justify-content: center; }
+            .search-filter-form { flex-direction: column; }
+            .footer-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        @media (max-width: 576px) {
+            .authors-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+            .footer-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header (same as other pages) -->
+    <header>
+        <div class="container header-container">
+            <a href="/" class="logo">
+                <span>B</span>ook<span>B</span>argain
+            </a>
+            <nav>
+                <a href="/">Home</a>
+                
+                <!-- Categories Dropdown -->
+                <div class="dropdown">
+                    <div class="dropdown-toggle" id="categoriesDropdown">
+                        Categories
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="dropdown-menu" aria-labelledby="categoriesDropdown">
+                        <a class="dropdown-item" href="/category/fiction">Fiction</a>
+                        <a class="dropdown-item" href="/category/non-fiction">Non-Fiction</a>
+                        <a class="dropdown-item" href="/category/mystery">Mystery & Thriller</a>
+                        <a class="dropdown-item" href="/category/romance">Romance</a>
+                        <a class="dropdown-item" href="/category/scifi">Sci-Fi & Fantasy</a>
+                        <a class="dropdown-item" href="/category/biography">Biography</a>
+                        <a class="dropdown-item" href="/category/children">Children's Books</a>
+                        <a class="dropdown-item" href="/category/academic">Academic</a>
+                    </div>
+                </div>
+                
+                <!-- Services Dropdown -->
+                <div class="dropdown">
+                    <div class="dropdown-toggle" id="servicesDropdown">
+                        Services
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="dropdown-menu" aria-labelledby="servicesDropdown">
+                        <a class="dropdown-item" href="/services/price-comparison">Price Comparison</a>
+                        <a class="dropdown-item" href="/services/price-alerts">Price Alerts</a>
+                        <a class="dropdown-item" href="/services/recommendations">Book Recommendations</a>
+                        <a class="dropdown-item" href="/services/reviews">Book Reviews</a>
+                    </div>
+                </div>
+                
+                <!-- Authors Dropdown -->
+                <div class="dropdown">
+                    <div class="dropdown-toggle" id="authorsDropdown">
+                        Authors
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="dropdown-menu" aria-labelledby="authorsDropdown">
+                        <a class="dropdown-item" href="/author/sudha-murthy">Sudha Murthy</a>
+                        <a class="dropdown-item" href="/author/chetan-bhagat">Chetan Bhagat</a>
+                        <a class="dropdown-item" href="/author/jane-austen">Jane Austen</a>
+                        <a class="dropdown-item" href="/author/agatha-christie">Agatha Christie</a>
+                        <a class="dropdown-item" href="/author/jk-rowling">J.K. Rowling</a>
+                        <a class="dropdown-item" href="/author/arundhati-roy">Arundhati Roy</a>
+                        <a class="dropdown-item" href="/authors">All Authors</a>
+                    </div>
+                </div>
+                
+                <a href="/more">More</a>
+                <div class="search-container">
+                    <form action="/search" method="GET">
+                        <input type="text" name="query" class="search-input" placeholder="Search by book, by name, author, genre...">
+                        <button type="submit" class="search-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">All Authors</h1>
+            <p class="page-description">
+                Browse our collection of authors and discover their books. Find the best deals on books from your favorite authors across multiple online bookstores.
+            </p>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="search-filter">
+            <h2 class="search-filter-title">Find an Author</h2>
+            <form action="/authors" method="GET" class="search-filter-form">
+                <input type="text" name="search" class="search-filter-input" placeholder="Search by author name...">
+                <button type="submit" class="search-filter-button">Search</button>
+            </form>
+            
+            <!-- Alphabet Filter -->
+            <div class="alphabet-filter">
+                <a href="/authors" class="alphabet-letter active">All</a>
+                {% for letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' %}
+                <a href="/authors?letter={{ letter }}" class="alphabet-letter">{{ letter }}</a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Authors Grid -->
+        <div class="authors-grid">
+            {% for author, count in authors %}
+            <div class="author-card">
+                <img src="https://source.unsplash.com/random/200x200/?person" alt="{{ author }}" class="author-avatar">
+                <h3 class="author-name">{{ author }}</h3>
+                <p class="author-book-count">{{ count }} book{% if count != 1 %}s{% endif %}</p>
+                <a href="/author/{{ author.lower().replace(' ', '-') }}" class="view-author-button">
+                    View Books
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 4px;">
+                        <polyline points="9 5 15 12 9 19"></polyline>
+                    </svg>
+                </a>
+            </div>
+            {% endfor %}
+            
+            {% if not authors %}
+            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem 0;">
+                <h3>No authors found</h3>
+                <p>Try adjusting your search or check back later for new additions.</p>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Footer (same as other pages) -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3 class="footer-heading">About Us</h3>
+                    <p class="footer-text">
+                        Book Bargain is your one-stop destination for finding the best deals on books across multiple platforms.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="footer-heading">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="/about">About</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="/faq">FAQ</a></li>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="footer-heading">Categories</h3>
+                    <ul class="footer-links">
+                        <li><a href="/category/fiction">Fiction</a></li>
+                        <li><a href="/category/non-fiction">Non-Fiction</a></li>
+                        <li><a href="/category/children">Children</a></li>
+                        <li><a href="/category/academic">Academic</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="footer-heading">Connect With Us</h3>
+                    <div class="social-links">
+                        <a href="#" class="social-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="copyright">
+                    &copy; <script>document.write(new Date().getFullYear())</script> Book Bargain. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for dropdown menus -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dropdown menu functionality
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            
+            dropdownToggles.forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    const dropdownMenu = this.nextElementSibling;
+                    
+                    // Close all other dropdown menus
+                    document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                        if (menu !== dropdownMenu) {
+                            menu.classList.remove('show');
+                            menu.previousElementSibling.querySelector('svg').style.transform = 'rotate(0deg)';
+                        }
+                    });
+                    
+                    // Toggle the current dropdown menu
+                    dropdownMenu.classList.toggle('show');
+                    
+                    // Rotate the arrow icon
+                    const arrow = this.querySelector('svg');
+                    if (dropdownMenu.classList.contains('show')) {
+                        arrow.style.transform = 'rotate(180deg)';
+                    } else {
+                        arrow.style.transform = 'rotate(0deg)';
+                    }
+                });
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.dropdown')) {
+                    document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                        menu.classList.remove('show');
+                        menu.previousElementSibling.querySelector('svg').style.transform = 'rotate(0deg)';
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - Book Bargain</title>
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f1ea;
+        }
+
+        /* Header styles */
+        header {
+            background-color: #7a4a62;
+            color: white;
+            padding: 1rem;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .logo {
+            color: #e8a798;
+            text-decoration: none;
+            font-size: 1.5rem;
+        }
+
+        .logo span {
+            font-size: 2rem;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Dropdown menu styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            margin: 0 1rem;
+            transition: color 0.3s;
+            color: white;
+        }
+        
+        .dropdown-toggle:hover {
+            color: #e8a798;
+        }
+        
+        .dropdown-toggle svg {
+            margin-left: 5px;
+            transition: transform 0.3s;
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 1000;
+            display: none;
+            min-width: 180px;
+            padding: 0.5rem 0;
+            margin: 0.125rem 0 0;
+            background-color: #fff;
+            border-radius: 0.25rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        
+        .dropdown-menu.show {
+            display: block;
+        }
+        
+        .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 0.5rem 1rem;
+            clear: both;
+            font-weight: 400;
+            color: #333;
+            text-align: inherit;
+            white-space: nowrap;
+            background-color: transparent;
+            border: 0;
+            transition: background-color 0.3s;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #f8f1ea;
+            color: #7a4a62;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: none;
+            width: 300px;
+        }
+
+        /* Main content layout */
+        .main-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            gap: 2rem;
+        }
+
+        .search-results {
+            flex: 1;
+        }
+
+        .search-header {
+            margin-bottom: 2rem;
+            color: #333;
+        }
+
+        /* Book grid */
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .book-card {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .book-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .book-info {
+            padding: 1rem;
+            background: #a67b95;
+            color: white;
+        }
+
+        .book-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-author {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .book-genre {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .book-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #f8d448;
+        }
+
+        .store-badges {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .store-tag {
+            background: white;
+            color: #333;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .view-button {
+            display: inline-flex;
+            align-items: center;
+            background: white;
+            color: #7a4a62;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: #c27ba0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            color: white;
+            height: fit-content;
+        }
+
+        .filter-section {
+            margin-bottom: 2rem;
+        }
+
+        .filter-title {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .price-inputs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .price-input {
+            width: 80px;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 4px;
+        }
+
+        .go-button {
+            background: #7a4a62;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .go-button:hover {
+            background: #694058;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Rating stars */
+        .rating {
+            color: #f8d448;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .book-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+      <div class="header-container">
+          <a href="/" class="logo">
+              <span>B</span>ook<span>B</span>argain
+          </a>
+          <nav>
+              <a href="/">Home</a>
+              
+              <!-- Categories Dropdown -->
+              <div class="dropdown">
+                  <div class="dropdown-toggle" id="categoriesDropdown">
+                      Categories
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                  </div>
+                  <div class="dropdown-menu" aria-labelledby="categoriesDropdown">
+                      {% for genre in genres %}
+                      <a class="dropdown-item" href="/category/{{ genre }}">{{ genre }}</a>
+                      {% endfor %}
+                      <a class="dropdown-item" href="/categories">All Categories</a>
+                  </div>
+              </div>
+              
+              <!-- Services Dropdown -->
+              <div class="dropdown">
+                  <div class="dropdown-toggle" id="servicesDropdown">
+                      Services
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                  </div>
+                  <div class="dropdown-menu" aria-labelledby="servicesDropdown">
+                      <a class="dropdown-item" href="/best-deals">Best Deals</a>
+                      <a class="dropdown-item" href="/services">Price Comparison</a>
+                      <a class="dropdown-item" href="/services">Price Alerts</a>
+                      <a class="dropdown-item" href="/services">Book Recommendations</a>
+                  </div>
+              </div>
+              
+              <!-- Authors Dropdown -->
+              <div class="dropdown">
+                  <div class="dropdown-toggle" id="authorsDropdown">
+                      Authors
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                  </div>
+                  <div class="dropdown-menu" aria-labelledby="authorsDropdown">
+                      {% for author in authors[:6] %}
+                      <a class="dropdown-item" href="/author/{{ author }}">{{ author }}</a>
+                      {% endfor %}
+                      <a class="dropdown-item" href="/authors">All Authors</a>
+                  </div>
+              </div>
+              
+              <a href="/more">More</a>
+              <div class="search-container">
+                  <form action="/search" method="GET">
+                      <input type="text" name="query" class="search-input" placeholder="Search by book, by name, author, genre..." value="{{ query }}">
+                  </form>
+              </div>
+          </nav>
+      </div>
+  </header>
+
+  <main class="main-container">
+      <div class="search-results">
+          <div class="search-header">
+              <h2>Search Results for "{{ query }}"</h2>
+              <p>Found {{ unique_books|length }} results</p>
+          </div>
+
+          <!-- Updated book grid section to group books by title -->
+          <div class="book-grid">
+              {% if unique_books %}
+                  {% for book_title, book_info in unique_books.items() %}
+                      <div class="book-card">
+                          <img src="{{ book_info.image_url }}" alt="{{ book_title }}" class="book-image" onerror="this.src='https://source.unsplash.com/random/300x400/?book-cover'">
+                          <div class="book-info">
+                              <h3 class="book-title">{{ book_title }}</h3>
+                              <p class="book-author">{{ book_info.author }}</p>
+                              <p class="book-genre">{{ book_info.genre }}</p>
+                              {% if book_info.rating > 0 %}
+                              <div class="rating">
+                                  {% for i in range(5) %}
+                                      {% if i < book_info.rating|int %}
+                                          ★
+                                      {% else %}
+                                          ☆
+                                      {% endif %}
+                                  {% endfor %}
+                                  {{ "%.1f"|format(book_info.rating) }}
+                              </div>
+                              {% endif %}
+                              <p class="book-price">{% if book_info.min_price > 0 %}₹{{ "%.2f"|format(book_info.min_price) }}{% else %}Price not available{% endif %}</p>
+                              <div class="store-badges">
+                                  {% for source in book_info.sources %}
+                                      <span class="store-tag">{{ source }}</span>
+                                  {% endfor %}
+                              </div>
+                              <a href="/book/{{ book_info.isbn }}" class="view-button">
+                                  View
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 4px;">
+                                      <polyline points="9 5 15 12 9 19"></polyline>
+                                  </svg>
+                              </a>
+                          </div>
+                      </div>
+                  {% endfor %}
+              {% else %}
+                  <div class="no-results">
+                      <h3>No results found for "{{ query }}"</h3>
+                      <p>Try searching for a different book, author, or genre.</p>
+                  </div>
+              {% endif %}
+          </div>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+          <div class="filter-section">
+              <h3 class="filter-title">> Ratings(high to low)</h3>
+          </div>
+          <div class="filter-section">
+              <h3 class="filter-title">> Custom Price</h3>
+              <div class="price-inputs">
+                  <input type="number" placeholder="Min" class="price-input" id="min-price" value="{{ request.args.get('min', '') }}">
+                  <input type="number" placeholder="Max" class="price-input" id="max-price" value="{{ request.args.get('max', '') }}">
+              </div>
+              <button class="go-button" id="filter-button">Go</button>
+          </div>
+      </aside>
+  </main>
+
+  <script>
+      // Add search functionality
+      document.querySelector('.search-input').addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+              this.form.submit();
+          }
+      });
+
+      // Add price filter functionality
+      document.getElementById('filter-button').addEventListener('click', function() {
+          const min = document.getElementById('min-price').value;
+          const max = document.getElementById('max-price').value;
+          
+          // Redirect with the price parameters
+          window.location.href = `/search?query={{ query }}&min=${min || 0}&max=${max || ''}`;
+      });
+      
+      // Dropdown menu functionality
+      document.addEventListener('DOMContentLoaded', function() {
+          // Get all dropdown toggles
+          const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+          
+          // Add click event listener to each toggle
+          dropdownToggles.forEach(toggle => {
+              toggle.addEventListener('click', function() {
+                  // Get the dropdown menu
+                  const dropdownMenu = this.nextElementSibling;
+                  
+                  // Close all other dropdown menus
+                  document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                      if (menu !== dropdownMenu) {
+                          menu.classList.remove('show');
+                          menu.previousElementSibling.querySelector('svg').style.transform = 'rotate(0deg)';
+                      }
+                  });
+                  
+                  // Toggle the current dropdown menu
+                  dropdownMenu.classList.toggle('show');
+                  
+                  // Rotate the arrow icon
+                  const arrow = this.querySelector('svg');
+                  if (dropdownMenu.classList.contains('show')) {
+                      arrow.style.transform = 'rotate(180deg)';
+                  } else {
+                      arrow.style.transform = 'rotate(0deg)';
+                  }
+              });
+          });
+          
+          // Close dropdown when clicking outside
+          document.addEventListener('click', function(event) {
+              if (!event.target.closest('.dropdown')) {
+                  document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                      menu.classList.remove('show');
+                      menu.previousElementSibling.querySelector('svg').style.transform = 'rotate(0deg)';
+                  });
+              }
+          });
+      });
+  </script>
+</body>
+</html>
