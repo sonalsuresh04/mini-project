@@ -981,6 +981,8 @@ def search():
     
     return render_template('search.html', query=query, unique_books=unique_books, genres=genres, authors=authors)
 
+# This is a snippet of the relevant functions that handle price data
+
 @app.route('/book/<isbn>')
 def book_detail(isbn):
     # Handle invalid ISBN values
@@ -1004,6 +1006,8 @@ def book_detail(isbn):
             book_data = list(orm.select((
                 b.book_name, b.isbn, b.author, 
                 b.image_url, b.website, b.price, b.rating, 
+                b.isbn, b.author, 
+                b.image_url, b.website, b.price, b.rating, 
                 b.description, b.genre, b.binding, b.language
             ) for b in BookPrice if b.isbn == isbn))
             
@@ -1022,12 +1026,9 @@ def book_detail(isbn):
                 item[10] if item[10] else "Unknown"
             ) for item in book_data]
             
-            # Select the "best" entry for displaying book details
-            # Criteria: Prefer the entry with a non-empty description, then highest rating
-            best_entry = max(book_data, key=lambda x: (
-                len(x[7]) if x[7] != "No description available" else 0,  # Prioritize non-empty description
-                x[6]  # Then highest rating
-            ))
+            # Sort the book data by price (lowest first)
+            # This ensures the price comparison table shows prices in ascending order
+            book_data = sorted(book_data, key=lambda x: x[5] if x[5] > 0 else float('inf'))
             
             # Create a dictionary to store unique entries by website
             # This prevents duplicates in the price comparison table
@@ -1040,22 +1041,28 @@ def book_detail(isbn):
             # Convert back to list, ensuring no duplicates
             book_data = list(websites.values())
             
-            # Ensure the best entry is used for the main details
-            if book_data and best_entry:
-                # Find the index of the best entry's website in the deduplicated list
-                best_website = best_entry[4]
-                best_index = next((i for i, item in enumerate(book_data) if item[4] == best_website), None)
-                
-                if best_index is not None:
-                    # Replace the entry for that website with the best entry
-                    book_data[best_index] = best_entry
-                else:
-                    # If the best entry's website was somehow not in the deduplicated list, add it
-                    book_data.append(best_entry)
-                
-                # Move the best entry to the first position for display purposes
-                if best_index != 0 and best_index is not None:
-                    book_data[0], book_data[best_index] = book_data[best_index], book_data[0]
+            # Ensure we have a complete set of websites for comparison
+            # If any of the main websites are missing, add placeholder entries
+            main_websites = ["amazon", "bookswagon", "kitabay"]
+            for website in main_websites:
+                if website not in [item[4] for item in book_data]:
+                    # Add a placeholder entry with price 0
+                    book_data.append((
+                        book_data[0][0],  # Use the same book name
+                        book_data[0][1],  # Use the same ISBN
+                        book_data[0][2],  # Use the same author
+                        book_data[0][3],  # Use the same image
+                        website,          # The missing website
+                        0.0,              # Price not available
+                        0.0,              # No rating
+                        "No description available",
+                        book_data[0][8],  # Use the same genre
+                        book_data[0][9],  # Use the same binding
+                        book_data[0][10]  # Use the same language
+                    ))
+            
+            # Sort again to ensure the cheapest prices are shown first
+            book_data = sorted(book_data, key=lambda x: x[5] if x[5] > 0 else float('inf'))
                 
         else:
             # If no books found by ISBN, try to find by partial ISBN match
